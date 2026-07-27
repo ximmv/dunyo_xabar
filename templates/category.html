@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ name }} — Dunyo Xabar{% endblock %}
+{% block content %}
+<section class="page-header">
+  <p class="eyebrow">Bo'lim</p>
+  <h1>{{ name }}</h1>
+</section>
+
+{% if articles %}
+<section class="grid-section">
+  <div class="article-grid">
+    {% for a in articles %}
+    <article class="card">
+      <a href="{{ url_for('article', slug=a.slug) }}" class="card-media">
+        {% if a.image_url %}
+          <img src="{{ url_for('static', filename=a.image_url) }}" alt="{{ a.title }}" loading="lazy">
+        {% else %}
+          <div class="card-media placeholder"></div>
+        {% endif %}
+      </a>
+      <div class="card-body">
+        <p class="eyebrow">{{ name }}</p>
+        <h3><a href="{{ url_for('article', slug=a.slug) }}">{{ a.title }}</a></h3>
+        <p class="card-summary">{{ a.summary }}</p>
+        <p class="dateline">{{ a.created_at | chiroyli_sana }}</p>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% else %}
+<div class="empty-state">
+  <h2>Bu bo'limda hozircha maqola yo'q</h2>
+</div>
+{% endif %}
+{% endblock %}
