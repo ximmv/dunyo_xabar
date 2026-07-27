@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ 'Tahrirlash' if art else 'Yangi maqola' }} — Dunyo Xabar</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="admin-body">
+<div class="admin-wrap">
+  <header class="admin-header">
+    <div class="logo">
+      <span class="logo-mark">DX</span>
+      <span class="logo-text">Dunyo<em>Xabar</em> <small>Admin</small></span>
+    </div>
+    <div class="admin-actions">
+      <a href="{{ url_for('admin_dashboard') }}">&larr; Ro'yxatga qaytish</a>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash-box">{% for m in messages %}<p>{{ m }}</p>{% endfor %}</div>
+    {% endif %}
+  {% endwith %}
+
+  <h1 class="form-title">{{ 'Maqolani tahrirlash' if art else 'Yangi maqola qo\'shish' }}</h1>
+
+  <form method="post" enctype="multipart/form-data" class="admin-form">
+    <label>Sarlavha
+      <input type="text" name="title" required value="{{ art.title if art else '' }}">
+    </label>
+
+    <label>Bo'lim
+      <select name="category" required>
+        <option value="">Tanlang...</option>
+        {% for c in categories %}
+        <option value="{{ c.slug }}" {{ 'selected' if art and art.category==c.slug }}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>Qisqacha mazmun (ro'yxatlarda ko'rinadi)
+      <textarea name="summary" rows="3" required>{{ art.summary if art else '' }}</textarea>
+    </label>
+
+    <label>To'liq matn (har bir paragraf yangi qatordan boshlansin)
+      <textarea name="content" rows="14" required>{{ art.content if art else '' }}</textarea>
+    </label>
+
+    <label>Rasm {% if art and art.image_url %}<span class="hint">(joriy rasm saqlanadi, agar yangisini tanlamasangiz)</span>{% endif %}
+      <input type="file" name="image" accept="image/png,image/jpeg,image/webp">
+    </label>
+    {% if art and art.image_url %}
+      <img class="current-image" src="{{ url_for('static', filename=art.image_url) }}" alt="Joriy rasm">
+    {% endif %}
+
+    <label class="checkbox-label">
+      <input type="checkbox" name="is_breaking" {{ 'checked' if art and art.is_breaking }}>
+      Muhim (breaking) sifatida belgilash
+    </label>
+
+    <button type="submit" class="btn-primary">{{ 'Saqlash' if art else 'Nashr qilish' }}</button>
+  </form>
+</div>
+</body>
+</html>
