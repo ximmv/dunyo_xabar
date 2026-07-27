@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Dunyo Xabar{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="dispatch-bar" aria-hidden="true">
+  <div class="dispatch-track">
+    {% for i in range(3) %}
+    <span class="dispatch-item"><span class="dot"></span>TOSHKENT &middot; JONLI YANGILANISH</span>
+    <span class="dispatch-item">DUNYO BO'YLAB 6 TA BO'LIM</span>
+    <span class="dispatch-item">QO'LDA TAHRIRLANGAN, ISHONCHLI MANBA</span>
+    {% endfor %}
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="{{ url_for('home') }}" class="logo">
+      <span class="logo-mark">DX</span>
+      <span class="logo-text">Dunyo<em>Xabar</em></span>
+    </a>
+    <form class="search-form" action="{{ url_for('search') }}" method="get">
+      <input type="text" name="q" placeholder="Qidiruv..." value="{{ request.args.get('q','') }}">
+      <button type="submit" aria-label="Qidirish">&#8594;</button>
+    </form>
+  </div>
+  <nav class="main-nav">
+    <a href="{{ url_for('home') }}" class="{{ 'active' if request.endpoint=='home' }}">Bosh sahifa</a>
+    {% for c in categories %}
+    <a href="{{ url_for('category', slug=c.slug) }}" class="{{ 'active' if request.view_args and request.view_args.get('slug')==c.slug }}">{{ c.name }}</a>
+    {% endfor %}
+  </nav>
+</header>
+
+<main>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash-box">{% for m in messages %}<p>{{ m }}</p>{% endfor %}</div>
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-mark">DX</span>
+      <span class="logo-text">Dunyo<em>Xabar</em></span>
+    </div>
+    <p>Dunyo bo'ylab bo'layotgan voqealarni o'zbek tilida yorituvchi yangiliklar sahifasi.</p>
+    <p class="footer-meta">&copy; {{ 2026 }} Dunyo Xabar. Barcha huquqlar himoyalangan.</p>
+  </div>
+</footer>
+
+</body>
+</html>
