@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Dunyo Xabar — Bosh sahifa{% endblock %}
+{% block content %}
+
+{% if breaking %}
+<div class="breaking-strip">
+  <span class="breaking-label">Muhim</span>
+  <div class="breaking-list">
+    {% for b in breaking %}
+      <a href="{{ url_for('article', slug=b.slug) }}">{{ b.title }}</a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if hero %}
+<section class="hero">
+  <a href="{{ url_for('article', slug=hero.slug) }}" class="hero-media">
+    {% if hero.image_url %}
+      <img src="{{ url_for('static', filename=hero.image_url) }}" alt="{{ hero.title }}">
+    {% else %}
+      <div class="hero-media placeholder"></div>
+    {% endif %}
+  </a>
+  <div class="hero-body">
+    <p class="eyebrow">{{ 'DUNYO' if hero.category not in ['dunyo'] else 'DUNYO' }} &mdash; {{ categories | selectattr('slug','equalto',hero.category) | map(attribute='name') | first }}</p>
+    <h1><a href="{{ url_for('article', slug=hero.slug) }}">{{ hero.title }}</a></h1>
+    <p class="hero-summary">{{ hero.summary }}</p>
+    <p class="dateline">{{ hero.created_at | chiroyli_sana }}</p>
+  </div>
+</section>
+{% else %}
+<div class="empty-state">
+  <h2>Hozircha maqolalar yo'q</h2>
+  <p>Birinchi yangilikni <a href="{{ url_for('admin_login') }}">admin panel</a> orqali qo'shing.</p>
+</div>
+{% endif %}
+
+{% if latest %}
+<section class="grid-section">
+  <h2 class="section-title">So'nggi yangiliklar</h2>
+  <div class="article-grid">
+    {% for a in latest %}
+    <article class="card">
+      <a href="{{ url_for('article', slug=a.slug) }}" class="card-media">
+        {% if a.image_url %}
+          <img src="{{ url_for('static', filename=a.image_url) }}" alt="{{ a.title }}" loading="lazy">
+        {% else %}
+          <div class="card-media placeholder"></div>
+        {% endif %}
+      </a>
+      <div class="card-body">
+        <p class="eyebrow">{{ categories | selectattr('slug','equalto',a.category) | map(attribute='name') | first }}</p>
+        <h3><a href="{{ url_for('article', slug=a.slug) }}">{{ a.title }}</a></h3>
+        <p class="card-summary">{{ a.summary }}</p>
+        <p class="dateline">{{ a.created_at | chiroyli_sana }}</p>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}
