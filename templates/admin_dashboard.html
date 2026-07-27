@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin panel — Dunyo Xabar</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="admin-body">
+<div class="admin-wrap">
+  <header class="admin-header">
+    <div class="logo">
+      <span class="logo-mark">DX</span>
+      <span class="logo-text">Dunyo<em>Xabar</em> <small>Admin</small></span>
+    </div>
+    <div class="admin-actions">
+      <a href="{{ url_for('home') }}" target="_blank">Saytni ko'rish &#8599;</a>
+      <a href="{{ url_for('admin_logout') }}">Chiqish</a>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash-box">{% for m in messages %}<p>{{ m }}</p>{% endfor %}</div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="admin-toolbar">
+    <h1>Barcha maqolalar <span class="count">{{ articles|length }}</span></h1>
+    <a href="{{ url_for('admin_new') }}" class="btn-primary">+ Yangi maqola</a>
+  </div>
+
+  {% if articles %}
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Sarlavha</th>
+        <th>Bo'lim</th>
+        <th>Sana</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in articles %}
+      <tr>
+        <td>
+          {% if a.is_breaking %}<span class="tag-breaking">Muhim</span>{% endif %}
+          {{ a.title }}
+        </td>
+        <td>{{ categories | selectattr('slug','equalto',a.category) | map(attribute='name') | first }}</td>
+        <td class="mono">{{ a.created_at | chiroyli_sana }}</td>
+        <td class="row-actions">
+          <a href="{{ url_for('article', slug=a.slug) }}" target="_blank">Ko'rish</a>
+          <a href="{{ url_for('admin_edit', article_id=a.id) }}">Tahrirlash</a>
+          <form method="post" action="{{ url_for('admin_delete', article_id=a.id) }}" onsubmit="return confirm('Bu maqolani o\'chirishga ishonchingiz komilmi?');">
+            <button type="submit" class="link-danger">O'chirish</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <h2>Hali maqola qo'shilmagan</h2>
+    <p><a href="{{ url_for('admin_new') }}">Birinchi maqolani qo'shish</a></p>
+  </div>
+  {% endif %}
+</div>
+</body>
+</html>
